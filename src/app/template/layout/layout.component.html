@@ -1,0 +1,75 @@
+<div class="container-fluid h-100">
+  <div class="row h-100">
+    <aside class="col-2 bg-light">
+      <form action="">
+        <div class="my-3">
+          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Pesquisar conversa">
+        </div>
+      </form>
+      <hr>
+      <nav class="nav flex-column">
+
+        <div class=" active px-0" aria-current="page" href="#">
+
+          <div class="card w-100 border-0 " *ngFor="let user of users">
+            <div class="row g-0 align-items-center">
+              <div class="col-md-1">
+                <div class="rounded-circle bg-success" style="height: 15px; width: 15px"></div>
+              </div>
+              <div class="col-md-11">
+                <div class="card-body py-0">
+                  <h5 class="h6 mb-0 text-dark">{{ user.first_name }}</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <i *ngIf="! users.length">
+            Nenhum usuário conectado
+          </i>
+
+        </div>
+
+      </nav>
+    </aside>
+
+    <div class="col-10 vh-100 wrapper-menssagem g-0">
+      <div class="row wrapper-message-enviable">
+        <div class="col-12 message-container">
+          <div class="row mb-3 px-5" *ngFor="let message of messages"
+               [ngClass]="{'justify-content-end': isMyMessage(message)}">
+            <div class="col-10">
+              <div class="card border-0 border-roudend">
+                <div class="card-header py-0 border-0"  [ngClass]="{'d-none': isMyMessage(message)}" style="background: none">
+                  <strong>{{ message.author.first_name }}</strong>
+                </div>
+                <ul class="list-group  list-group-flush">
+                  <li class="list-group-item py-0" [ngClass]="{'border-roudend my-message-sended': isMyMessage(message)}" style="background: none">{{ message.message }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form action="" (submit)="sendMessage($event)" style="height: 100px" class="form-message bg-light">
+        <div class="row w-100 px-2">
+          <div class="col-11">
+            <input type="text" class="form-control" id="message" placeholder="Digite sua mensagem aqui">
+          </div>
+          <div class="col-1">
+            <button class="btn btn-outline-secondary w-100" type="submit">
+              Enviar
+            </button>
+          </div>
+        </div>
+<!--        <div class="input-group">-->
+<!--          <input type="text" class="form-control" id="message" placeholder="Digite sua mensagem aqui">-->
+<!--          <button class="btn btn-outline-secondary" type="submit">-->
+<!--            Enviar-->
+<!--          </button>-->
+<!--        </div>-->
+      </form>
+    </div>
+
+  </div>
+</div>
