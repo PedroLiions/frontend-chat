@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SocketService} from "../../services/socket.service";
 import {JwtHelperService} from "@auth0/angular-jwt";
 import {ActivatedRoute, Route, Router} from "@angular/router";
@@ -8,23 +8,23 @@ import {ActivatedRoute, Route, Router} from "@angular/router";
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent implements OnInit, OnDestroy {
 
   messages: any[] = [];
 
   users: any[] = [];
 
-  // @ts-ignore
-  test;
-
   constructor(
     private socketService: SocketService,
-    private jwtHelper: JwtHelperService
+    private jwtHelper: JwtHelperService,
+    private router: Router
   ) {
   }
 
   ngOnInit(): void {
+    this.socketService.connect();
     this.listenerUserConnected();
+    this.previousUserConnected();
     this.previousMessages();
     this.listenerMessages();
   }
@@ -44,6 +44,12 @@ export class LayoutComponent implements OnInit {
     this.scrollMessagesBottom();
   }
 
+  previousUserConnected() {
+    this.socketService.socket.on("previousUserConnected", users => {
+      console.log("prev users connected", users);
+      this.setUsers(users)
+    });
+  }
   previousMessages() {
     this.socketService.socket.on("previousMessages", messages => {
       this.messages = messages
@@ -52,14 +58,13 @@ export class LayoutComponent implements OnInit {
   }
 
   listenerUserConnected() {
-    this.socketService.socket.on("usersConnected", user => {
-      this.users = user;
-    })
+    this.socketService.socket.on("usersConnected", users => this.setUsers(users))
   }
 
   listenerMessages() {
     this.socketService.socket.on("receivedMessage", message => {
       this.messages.push(message);
+      this.scrollMessagesBottom();
     })
 
     this.socketService.socket.on("receivedMyMessage", myMessage => this.messages.push(myMessage));
@@ -74,6 +79,29 @@ export class LayoutComponent implements OnInit {
   scrollMessagesBottom() {
     const wrapperMessageEnviable = <HTMLElement>document.querySelector(".message-container");
     wrapperMessageEnviable.scrollTop = wrapperMessageEnviable.scrollHeight;
+  }
+
+  setUsers(users: any) {
+    const token = localStorage.getItem("access_token");
+    const decoded = this.jwtHelper.decodeToken(<string>token);
+    users = users.filter((user: any) => user.user_id !== decoded.user_id);
+    this.users = users;
+  }
+
+  getMyUser() {
+    const token = localStorage.getItem("access_token");
+    const decoded = this.jwtHelper.decodeToken(<string>token);
+    return decoded;
+  }
+
+  sair() {
+    localStorage.clear();
+    this.router.navigateByUrl("/login");
+    this.socketService.disconnect();
+  }
+
+  ngOnDestroy() {
+    this.socketService.disconnect();
   }
 
 }

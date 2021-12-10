@@ -14,4 +14,8 @@ export class AuthService {
   login(credentials: any): Observable<any> {
     return this.http.post('http://localhost:3000/auth/login', credentials);
   }
+
+  register(form: any): Observable<any> {
+    return this.http.post('http://localhost:3000/auth/register', form);
+  }
 }

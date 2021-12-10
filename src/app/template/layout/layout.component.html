@@ -1,17 +1,17 @@
 <div class="container-fluid h-100">
   <div class="row h-100">
     <aside class="col-2 bg-light">
-      <form action="">
-        <div class="my-3">
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Pesquisar conversa">
-        </div>
-      </form>
-      <hr>
-      <nav class="nav flex-column">
+      <div class="my-3">
+        <div>Eu: {{ getMyUser().first_name }}</div>
+        <button class="px-0 mx-0 btn btn-link" (click)="sair()">
+          Sair
+        </button>
+      </div>
+      <nav class="nav flex-column mt-4">
 
         <div class=" active px-0" aria-current="page" href="#">
 
-          <div class="card w-100 border-0 " *ngFor="let user of users">
+          <div class="card bg-light w-100 border-0 " *ngFor="let user of users">
             <div class="row g-0 align-items-center">
               <div class="col-md-1">
                 <div class="rounded-circle bg-success" style="height: 15px; width: 15px"></div>
